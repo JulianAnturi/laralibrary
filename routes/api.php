@@ -10,6 +10,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::post('register', [AuthController::class, 'register'])->name('register');
 
-require __DIR__ .  './Person.php';
+require __DIR__ .  '/Person.php';
 
 require __DIR__ . '/Book.php';
