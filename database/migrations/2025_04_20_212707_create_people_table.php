@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('address', 255)->nullable();
             $table->string('identification', 45);
             $table->string('phone', 13);
+            $table->boolean('lended')->nullable();
             $table->timestamps();
         });
     }

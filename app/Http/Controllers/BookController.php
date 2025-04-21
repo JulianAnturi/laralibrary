@@ -53,8 +53,8 @@ class BookController extends BaseController
             'name' => 'required|string|max:100',
             'isbn' => 'required|string|max:20',
             'url' => 'required|string',
-            'state' => 'nullable|string',
-            'qantity' => 'required|integer',
+            'state' => 'nullable|integer',
+            'quantity' => 'required|integer',
             'price' => 'required|integer',
             'sypnosis' => 'nullable|string',
 

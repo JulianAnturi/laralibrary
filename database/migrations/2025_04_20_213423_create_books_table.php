@@ -12,8 +12,9 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->string('isbn', 20);
             $table->string('url');
-            $table->string('state')->nullable();
-            $table->integer('qantity');
+            $table->integer('state')->nullable();
+            $table->integer('quantity');
+            $table->integer('lended')->nullable();
             $table->integer('price');
             $table->text('sypnosis')->nullable();
             $table->timestamps();

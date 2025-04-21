@@ -37,7 +37,7 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'username' => 'required|string|unique:users|max:255',
+                'name' => 'required|string|unique:users|max:255',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|string|min:8',
             ]);
@@ -47,7 +47,7 @@ class AuthController extends Controller
             }
 
             $user = User::create([
-                'username' => $request['username'],
+                'name' => $request['name'],
                 'email' => $request['email'],
                 'password' => Hash::make($request['password']),
             ]);
@@ -83,7 +83,7 @@ class AuthController extends Controller
     {
         try {
 
-            $loginType = $request->has('email') ? 'email' : 'username';
+            $loginType = $request->has('email') ? 'email' : 'name';
 
             if (!Auth::attempt($request->only([$loginType, 'password'])))
                 return response(['message' => 'unauthorized'], 403);
