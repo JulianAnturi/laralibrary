@@ -42,6 +42,5 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
 RUN npm install && npm run build
 RUN php artisan config:cache
 RUN php artisan route:cache
-RUN php artisan view:cache
 # Comando por defecto
 CMD ["apache2-foreground"]

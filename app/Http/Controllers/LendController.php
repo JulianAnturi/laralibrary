@@ -35,10 +35,10 @@ class LendController extends BaseController
     }
     // Function to borrow a abook
     public function store(StoreLendRequest $request)
-    // public function store(Request $request)
     {
         $request->validated();
-        $data = $request->all();
+        $data = $request->only(['user_id', 'book_id']);
+        $data['date_lend'] = now()->format('y-m-d');
         return $this->antStore($data);
     }
 
@@ -49,7 +49,8 @@ class LendController extends BaseController
         if (!$lend) {
             return ResponseService::responseNotFound('prestamo');
         }
-
+        if ($lend->date_deliver != null)
+            return ResponseService::responseErrorUser('Este usuario ya ha devuelto el libro');
         $userId = $lend->user_id;
         $person = Person::find($userId);
         $this->validateIfExists($person,  'usuario');
