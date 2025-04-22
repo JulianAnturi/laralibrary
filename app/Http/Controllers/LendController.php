@@ -6,9 +6,15 @@ use App\Models\Lend as Model;
 use Illuminate\Http\Request;
 use Anturi\Larastarted\Controllers\BaseController;
 use Anturi\Larastarted\Helpers\ResponseService;
+use App\Exceptions\ModelNotFoundCustomException;
 use App\Models\Book;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreLendRequest;
+use App\Http\Requests\ReturnBookRequest;
+use App\Models\Lend;
+use App\Models\Person;
+use App\Services\LendService;
+
 use function PHPUnit\Framework\isEmpty;
 
 class LendController extends BaseController
@@ -31,30 +37,37 @@ class LendController extends BaseController
     public function store(StoreLendRequest $request)
     // public function store(Request $request)
     {
-        // $this->validateForm($request);
         $request->validated();
-        // $book = $request->book();
-        // return $book;
-        // $bookId = request('book_id');
-        // $book = Book::find($bookId);
-        // return $book;
-        // $book->quantity = 10;
-        // $book->lended = 1;
-        // $book->save();
-        // $quantity = $book->quantity;
-        // $lended = $book->lended;
-        // if ($quantity <= $lended)
-        //     return ResponseService::responseErrorUser('No hay libros disponibles, selecciona otro libro');
-        // $lended + 1;
-        // $book->lended = $lended;
-        // $book->save();
         $data = $request->all();
         return $this->antStore($data);
     }
 
-    public function return_book($userId, $bookId)
+    public function returnBook($id)
     {
-        return $this->antShow($userId, $this->model);
+        $lend = Lend::find($id);
+
+        if (!$lend) {
+            return ResponseService::responseNotFound('prestamo');
+        }
+
+        $userId = $lend->user_id;
+        $person = Person::find($userId);
+        $this->validateIfExists($person,  'usuario');
+
+        $bookId = $lend->book_id;
+        $book = Book::find($bookId);
+        $this->validateIfExists($book, 'libro');
+
+        LendService::returnBook($book);
+        LendService::returnPerson($person);
+        LendService::returnLend($lend);
+        return ResponseService::responseGet([$lend, $person, $book]);
+    }
+
+    private function validateIfExists($model, $modelName)
+    {
+        if (!$model)
+            throw new ModelNotFoundCustomException($modelName);
     }
 
     public function update(Request $request, $id)

@@ -9,7 +9,7 @@ class Lend extends Model
     protected $table = 'lends';
     protected $fillable = ['date_lend', 'date_deliver', 'user_id', 'book_id'];
 
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -19,5 +19,5 @@ class Lend extends Model
     {
         return $this->belongsTo(Book::class);
     }
-
 }
+
