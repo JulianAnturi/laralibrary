@@ -89,24 +89,12 @@ class AuthController extends Controller
                 return response(['message' => 'unauthorized'], 403);
 
             $user = Auth::user();
-            $cacheKey = 'user' . $user->email;
 
 
             $time = 60 * 24;
-            $user = User::with(['role' => function ($query) {
-                $query->select('roles.id');
-            }, 'empresa' => function ($query) {
-                $query->select('empresa.id', 'empresa.nombre', 'empresaIdCeluweb');
-            }])
-                // ->select('id', 'empresaId'. 'empresaIdCeluweb')
-                ->firstWhere($loginType, $request[$loginType]);
-
+            $user = User::where($loginType, $request[$loginType]);
             $usuario =  [
                 'id' => $user->id,
-                'empresaId' => $user->empresaId,
-                'role' => $user->role->pluck('id')->first(),
-                'empresa' => $user->empresa->nombre,
-                'empresaIdCeluweb' => $user->empresa->empresaIdCeluweb
             ];
 
             $tokenResult = $user->createToken('auth_token', ['*'], now()->addDays(2));
