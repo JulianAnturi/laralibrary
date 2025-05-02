@@ -77,6 +77,14 @@ class LendController extends BaseController
         $data = $request->all();
         return $this->antUpdate($data, $id);
     }
+    public function show($id)
+    {
+        $person = Person::find($id);
+        if (!$person)
+            throw new ModelNotFoundCustomException('persona');
+        $lendByPerson = $person->lends()->paginate(20);
+        return $lendByPerson;
+    }
 
     public function destroy($id)
     {

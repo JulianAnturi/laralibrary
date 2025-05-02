@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Anturi\Larastarted\Helpers\ResponseService;
+use App\Exceptions\ModelNotFoundCustomException;
 use App\Models\Person as Model;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use App\Models\Person;
 use App\Services\CrudService;
 
 class PersonController extends BaseController
@@ -12,7 +15,7 @@ class PersonController extends BaseController
     protected $model;
     protected $table = 'people';
     protected $class = 'PersonController';
-    protected $responseName = 'Person';
+    protected $responseName = 'usuario';
 
     public function __construct(Model $model)
     {
@@ -45,7 +48,14 @@ class PersonController extends BaseController
 
     public function destroy($id)
     {
-        return $this->antDestroy($id);
+        $person = Person::find($id);
+        if (!$person)
+            throw new ModelNotFoundCustomException('usuario');
+
+        $person->lended == 1 ?
+            $res = ResponseService::responseErrorUser('este usuario no puede ser eliminado, por que tiene libros sin devolver') :
+            $res = $this->antDestroy($id);
+        return $res;
     }
 
     private function validateForm(Request $request)

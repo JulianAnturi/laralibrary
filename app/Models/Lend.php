@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Person;
 
 class Lend extends Model
 {
@@ -10,14 +11,13 @@ class Lend extends Model
     protected $fillable = ['date_lend', 'date_deliver', 'user_id', 'book_id'];
 
 
-    public function user()
+    public function person()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Person::class, 'user_id');
     }
 
     public function book()
     {
-        return $this->belongsTo(Book::class);
+        return $this->belongsTo(Book::class, 'book_id');
     }
 }
-

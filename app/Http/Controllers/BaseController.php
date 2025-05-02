@@ -82,8 +82,8 @@ class BaseController extends Controller
         try {
             return  CrudService::destroy($id, $this->model, $this->responseName);
         } catch (Exception $e) {
-            LogService::catchError($e, env('APP_NAME'), $this->class, __LINE__);
             return ResponseService::responseError($e);
+            LogService::catchError($e, env('APP_NAME'), $this->class, __LINE__);
         }
     }
 
