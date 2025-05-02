@@ -8,8 +8,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Anturi\Larastarted\Helpers\ResponseService;
+use App\Services\CrudService;
+
 use Anturi\Larastarted\Helpers\LogService;
-use Anturi\Larastarted\Helpers\CrudService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Routing\Controller;
@@ -102,11 +103,11 @@ class BaseController extends Controller
         return DB::table($table)->get([$id, $field]);
     }
 
-    public function antsubSelect($table, $tableId = 'id', $parentTable, $parentTableId = 'id', $parentIdValue, $field)
-    {
-        return DB::table($table . ' as f')
-            ->join($parentTable . ' as s', 'f.' . $tableId, '=', 's.' . $parentTableId)
-            ->where('f.' . $field, '=', $parentIdValue,)
-            ->get();
-    }
+    // public function antsubSelect($table, $tableId = 'id', $parentTable, $parentTableId = 'id', $parentIdValue, $field)
+    // {
+    //     return DB::table($table . ' as f')
+    //         ->join($parentTable . ' as s', 'f.' . $tableId, '=', 's.' . $parentTableId)
+    //         ->where('f.' . $field, '=', $parentIdValue,)
+    //         ->get();
+    // }
 }

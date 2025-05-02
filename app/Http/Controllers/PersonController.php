@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Person as Model;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use App\Services\CrudService;
 
 class PersonController extends BaseController
 {
@@ -20,7 +21,7 @@ class PersonController extends BaseController
 
     public function index(Request $request)
     {
-        return $this->antIndex($request);
+        return CrudService::index($this->model, $request);
     }
 
     public function store(Request $request)
