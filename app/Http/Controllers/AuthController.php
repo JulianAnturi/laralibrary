@@ -93,14 +93,11 @@ class AuthController extends Controller
 
             $time = 60 * 24;
             $user = User::where($loginType, $request[$loginType])->first();
-            $usuario =  [
-                'id' => $user->id,
-            ];
 
             $tokenResult = $user->createToken('auth_token', ['*'], now()->addDays(2));
             $token = $tokenResult->plainTextToken;
             $cookie = cookie('jwt', $token, $time);
-            return ResponseService::responseGet(['user' => $usuario, 'token' => $token, 'cookie' => $cookie]);
+            return ResponseService::responseGet(['user' => $user, 'access_token' => $token, 'cookie' => $cookie]);
         } catch (Exception $e) {
             return $e;
 
