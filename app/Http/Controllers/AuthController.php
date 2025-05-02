@@ -92,7 +92,7 @@ class AuthController extends Controller
 
 
             $time = 60 * 24;
-            $user = User::where($loginType, $request[$loginType]);
+            $user = User::where($loginType, $request[$loginType])->first();
             $usuario =  [
                 'id' => $user->id,
             ];
@@ -102,11 +102,12 @@ class AuthController extends Controller
             $cookie = cookie('jwt', $token, $time);
             return ResponseService::responseGet(['user' => $usuario, 'token' => $token, 'cookie' => $cookie]);
         } catch (Exception $e) {
+            return $e;
 
             $message = $e->getMessage();
             $code = $e->getCode();
-            LogService::catchError($message, $code, 'fotos', 'AuthController', 144);
             return ResponseService::responseError($e);
+            LogService::catchError($message, $code, 'fotos', 'AuthController', 144);
         }
     }
     /**
