@@ -11,8 +11,8 @@ use App\Models\Book;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreLendRequest;
 use App\Http\Requests\ReturnBookRequest;
-use App\Models\Lend;
 use App\Models\Person;
+
 use App\Services\LendService;
 
 use function PHPUnit\Framework\isEmpty;
@@ -44,21 +44,18 @@ class LendController extends BaseController
 
     public function returnBook($id)
     {
-        $lend = Lend::find($id);
+        $person = Person::find($id);
 
-        if (!$lend) {
-            return ResponseService::responseNotFound('prestamo');
+        if (!$person) {
+            return ResponseService::responseNotFound('persona');
         }
+        $lend =  $person->lends()->orderBy('id', 'desc')->first();
+
         if ($lend->date_deliver != null)
             return ResponseService::responseErrorUser('Este usuario ya ha devuelto el libro');
-        $userId = $lend->user_id;
-        $person = Person::find($userId);
-        $this->validateIfExists($person,  'usuario');
-
         $bookId = $lend->book_id;
         $book = Book::find($bookId);
         $this->validateIfExists($book, 'libro');
-
         LendService::returnBook($book);
         LendService::returnPerson($person);
         LendService::returnLend($lend);
