@@ -31,8 +31,7 @@ class BookController extends BaseController
         if ($prefix && $field) {
             $trie = new \App\Services\TrieService();
 
-
-            foreach ($items as $item) {
+            foreach ($items->get() as $item) {
                 $value = strtolower($item->$field);
                 $words = preg_split('/\s+/', $value);
 
@@ -43,7 +42,6 @@ class BookController extends BaseController
 
             $filtered = $trie->search($field, $prefix);
             $filtered = collect($filtered)->unique('id')->values();
-            return $filtered;
 
             return ResponseService::responseGet($filtered);
         }
