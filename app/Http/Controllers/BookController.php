@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Book as Model;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController;
+use App\Exceptions\ModelNotFoundCustomException;
+use Anturi\Larastarted\Helpers\ResponseService;
 use App\Services\CrudService;
 
 class BookController extends BaseController
@@ -21,7 +23,32 @@ class BookController extends BaseController
 
     public function index(Request $request)
     {
-        return CrudService::index($this->model, $request);
+        $prefix = strtolower($request->input('prefix'));
+        $field = $request->input('field');
+
+        $items = Model::where('state', '<>', 2);
+
+        if ($prefix && $field) {
+            $trie = new \App\Services\TrieService();
+
+
+            foreach ($items as $item) {
+                $value = strtolower($item->$field);
+                $words = preg_split('/\s+/', $value);
+
+                foreach ($words as $word) {
+                    $trie->insert($field, $word, $item);
+                }
+            }
+
+            $filtered = $trie->search($field, $prefix);
+            $filtered = collect($filtered)->unique('id')->values();
+            return $filtered;
+
+            return ResponseService::responseGet($filtered);
+        }
+        $data = $items->paginate($request->input('limit', 20));
+        return ResponseService::responseGet($data);
     }
 
     public function store(Request $request)
@@ -45,7 +72,19 @@ class BookController extends BaseController
 
     public function destroy($id)
     {
-        return $this->antDestroy($id);
+
+        $book = Model::find($id);
+        if (!$book)
+            throw new ModelNotFoundCustomException('book');
+
+        if ($book->lended > 0)
+            $res = ResponseService::responseErrorUser('este libro no puede ser eliminado, porque alguien tiene un ejemplar');
+
+        $res = ResponseService::responseDelete('libro');
+        $book->state = 2;
+        $book->save();
+
+        return $res;
     }
 
     private function validateForm(Request $request)
